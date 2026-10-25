@@ -1,0 +1,164 @@
+[
+  {
+    "id": "chat-unneeded-contrast", "skill": "plain-chat",
+    "prompt": "直接回答脚本怎么启动。",
+    "context": "README 已确认入口命令 python app.py。",
+    "input": "你真正需要的不是了解复杂细节，而是掌握高效的启动流程。运行 python app.py。",
+    "must_preserve": ["python app.py"],
+    "must_avoid": ["新增未经提出的误解", "臆测端口或依赖"],
+    "pass_criteria": "给出已知命令，删除无作用的对照与开场。"
+  },
+  {
+    "id": "chat-necessary-negation", "skill": "plain-chat",
+    "prompt": "解释 401 是否表示服务器崩溃。",
+    "context": "只知道 HTTP 401。",
+    "input": "401 不代表服务器崩溃，通常表示认证失败。",
+    "must_preserve": ["否定服务器崩溃的必然推论", "认证失败"],
+    "must_avoid": ["删掉否定导致语义反转", "断言具体服务器状态"],
+    "pass_criteria": "保留纠错功能，指出仅凭状态码不能确定运行状态。"
+  },
+  {
+    "id": "chat-disagree", "skill": "plain-chat",
+    "prompt": "我觉得只要样例能跑通，就证明完整复现了论文，你同意吗？",
+    "context": "只有一个推理样例运行成功。",
+    "input": "",
+    "must_preserve": ["样例成功与完整复现的区别"],
+    "must_avoid": ["机械赞许并附和", "编造完整评测结果"],
+    "pass_criteria": "明确说明证据只覆盖样例，并给出需要核查的评测条件。"
+  },
+  {
+    "id": "chat-empathy", "skill": "plain-chat",
+    "prompt": "我改了半天还是报错，很烦。回应一下并帮我继续排查。",
+    "context": "没有报错详情。",
+    "input": "",
+    "must_preserve": ["排查需要具体错误信息"],
+    "must_avoid": ["诊断人格或心理疾病", "编造错误原因"],
+    "pass_criteria": "简短承接遭遇，请求最新错误等必要材料。"
+  },
+  {
+    "id": "docs-command", "skill": "plain-docs",
+    "prompt": "删去 README 套话，保留命令。",
+    "context": "只验证过一个样例；不可变更命令。",
+    "input": "这不是简单脚本，而是一套可靠的复现闭环。运行 `python run.py --seed 42`。已验证一个样例。",
+    "must_preserve": ["python run.py --seed 42", "一个样例"],
+    "must_avoid": ["更改 seed", "宣称完整复现"],
+    "pass_criteria": "描述实际状态，命令逐字保留。"
+  },
+  {
+    "id": "docs-missing-facts", "skill": "plain-docs",
+    "prompt": "把这段改得具体自然。",
+    "context": "未提供代码、入口或运行记录。",
+    "input": "本工具性能优异，一键即可获得满意结果。",
+    "must_preserve": ["技术事实尚未确认"],
+    "must_avoid": ["虚构命令、指标或输出路径"],
+    "pass_criteria": "给有限修改或编辑备注，标出需要核实的输入输出和操作信息。"
+  },
+  {
+    "id": "docs-support-boundary", "skill": "plain-docs",
+    "prompt": "减少 AI 味，保留运行限制。",
+    "context": "仅支持 Python 3.11 与 CPU。",
+    "input": "当前仅支持 Python 3.11，不支持 GPU。",
+    "must_preserve": ["Python 3.11", "不支持 GPU"],
+    "must_avoid": ["删除否定", "扩大支持范围"],
+    "pass_criteria": "可以保持原文，限制完整清楚。"
+  },
+  {
+    "id": "research-significance", "skill": "plain-research",
+    "prompt": "润色这段实验结论。",
+    "context": "A=81.2%，B=80.9%；同一测试集，单次运行，无显著性检验。",
+    "input": "A 显著优于 B，充分证明其卓越泛化能力。",
+    "must_preserve": ["81.2%", "80.9%", "单次运行", "无显著性检验"],
+    "must_avoid": ["宣称统计显著", "从单次结果推断泛化", "误算百分点"],
+    "pass_criteria": "给有限结果陈述，并保留证据边界。"
+  },
+  {
+    "id": "research-causality", "skill": "plain-research",
+    "prompt": "写得自然一点。",
+    "context": "观察性研究，只能支持相关。",
+    "input": "These findings may suggest an association; they do not establish causation.",
+    "must_preserve": ["相关", "不支持因果", "谨慎程度"],
+    "must_avoid": ["删掉 do not", "改成 prove"],
+    "pass_criteria": "保留必要限定，可原样保留。"
+  },
+  {
+    "id": "research-citation", "skill": "plain-research",
+    "prompt": "删套话并保留引用。",
+    "context": "只提供一句原文，未核查文献。",
+    "input": "值得注意的是，研究 A 在数据集 D 上报告了 72.4% [3]。",
+    "must_preserve": ["A", "D", "72.4%", "[3] 与对应结果的绑定"],
+    "must_avoid": ["编造 [3] 的书目信息", "声称已核查引用"],
+    "pass_criteria": "删去无用引导语，保留信息及引用关系。"
+  },
+  {
+    "id": "code-comments", "skill": "plain-code",
+    "prompt": "审阅注释中的 AI 味，先给建议。",
+    "context": "公开函数；不得更改契约或直接修改文件。",
+    "input": "def parse_count(value: str) -> int:\n    # Convert value to int.\n    return int(value)\n",
+    "must_preserve": ["签名", "返回行为", "审阅范围"],
+    "must_avoid": ["直接写文件", "删除类型或公开函数"],
+    "pass_criteria": "可建议移除复述注释，不扩展到无依据重构。"
+  },
+  {
+    "id": "code-swallowed-error", "skill": "plain-code",
+    "prompt": "检查这段是不是有 AI 味，给评审意见。",
+    "context": "没有调用者信息。",
+    "input": "try:\n    save_record(record)\nexcept Exception:\n    return True\n",
+    "must_preserve": ["先理解错误契约"],
+    "must_avoid": ["仅改命名", "断言已通过测试", "无依据删除全部异常处理"],
+    "pass_criteria": "指出可能把失败报告为成功，建议核查调用者和错误路径。"
+  },
+  {
+    "id": "code-valid-abstraction", "skill": "plain-code",
+    "prompt": "是否需要删掉工厂层以减少 AI 味？",
+    "context": "工厂维护三个插件的统一实例化接口，已有稳定调用者。",
+    "input": "PluginFactory.create(name, config)",
+    "must_preserve": ["真实插件契约", "调用者兼容"],
+    "must_avoid": ["因名称有 Factory 就删除"],
+    "pass_criteria": "认可现有用途，按职责评审，不做风格性破坏。"
+  },
+  {
+    "id": "mail-colleague", "skill": "plain-mail",
+    "prompt": "写给合作同事，周五前需要确认排期。",
+    "context": "双方已有合作；尚无额外附件。",
+    "input": "首先感谢你一直以来的辛勤付出。这不是催促，而是希望双方高效协同。",
+    "must_preserve": ["周五前确认排期", "同事关系"],
+    "must_avoid": ["虚构附件", "新增未经授权的承诺"],
+    "pass_criteria": "清楚提出请求，语气平实且得体。"
+  },
+  {
+    "id": "mail-professor", "skill": "plain-mail",
+    "prompt": "给第一次联系的导师润色，不要太像模板。",
+    "context": "作者仅提供以下内容。",
+    "input": "王老师您好，我想请教您是否有机会加入课题组。谢谢您抽空阅读。",
+    "must_preserve": ["尊称", "询问加入机会", "适度感谢"],
+    "must_avoid": ["删成命令句", "编造学历与经历"],
+    "pass_criteria": "保留关系需要的礼貌，必要时询问简短身份背景。"
+  },
+  {
+    "id": "mail-no-date", "skill": "plain-mail",
+    "prompt": "请对方审阅草稿，写得自然。只给正文。",
+    "context": "没有截止时间；没有确认附件。",
+    "input": "",
+    "must_preserve": ["请对方审阅草稿"],
+    "must_avoid": ["编造日期", "宣称已附文件", "额外写说明和评分"],
+    "pass_criteria": "只给正文，清楚请求，不擅加事实。"
+  },
+  {
+    "id": "mail-refusal", "skill": "plain-mail",
+    "prompt": "简化这段拒绝，保持礼貌。",
+    "context": "本周排期已满；没有下周交付授权。",
+    "input": "非常抱歉，这周排期已满，无法接下这项任务。",
+    "must_preserve": ["本周无法接任务", "得体的拒绝"],
+    "must_avoid": ["承诺下周完成", "删除拒绝"],
+    "pass_criteria": "保留拒绝和原因，礼貌符合关系。"
+  },
+  {
+    "id": "docs-english", "skill": "plain-docs",
+    "prompt": "Rewrite this README sentence plainly in English.",
+    "context": "Verified behavior: converts CSV to JSON. No performance evidence.",
+    "input": "Seamlessly unlock powerful data transformation capabilities.",
+    "must_preserve": ["CSV to JSON"],
+    "must_avoid": ["invented benchmarks", "new unsupported capabilities"],
+    "pass_criteria": "State the verified conversion in natural English."
+  }
+]
