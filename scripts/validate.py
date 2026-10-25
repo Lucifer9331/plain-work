@@ -32,7 +32,7 @@ def validate(root=ROOT):
         if not example.is_file():
             errors.append(f"Missing self-contained examples: {name}")
     for file in root.rglob("*.md"):
-        if ".git" in file.parts:
+        if any(part in {".git", "node_modules", "dist", ".next", ".vinext", ".wrangler", ".sites-runtime", "work"} for part in file.relative_to(root).parts):
             continue
         content = file.read_text(encoding="utf-8")
         for raw in re.findall(r"\]\(([^\n)]+)\)", content):
